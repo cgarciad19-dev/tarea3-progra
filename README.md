@@ -1,4 +1,4 @@
-# TokenVault — Sistema de cifrado de texto con tokens
+# Búl de Tokens UMG — Sistema de cifrado de texto con tokens
 
 ## Requisitos previos
 - Python 3.11 o superior → https://python.org/downloads
