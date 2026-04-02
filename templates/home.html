@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}Inicio{% endblock %}
+{% block content %}
+
+<div class="page-grid">
+
+  <!-- ── Panel izquierdo: acciones ── -->
+  <div class="panel">
+
+    <!-- Cifrar -->
+    <section class="card">
+      <h2>Cifrar texto</h2>
+      <form method="POST" action="{{ url_for('secret.encrypt') }}">
+        <div class="form-group">
+          <label for="text">Texto a cifrar</label>
+          <textarea id="text" name="text" rows="3" placeholder="Escribe el mensaje secreto…" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Cifrar y obtener token</button>
+      </form>
+    </section>
+
+    <!-- Descifrar -->
+    <section class="card">
+      <h2>Descifrar con token</h2>
+      <form method="POST" action="{{ url_for('secret.decrypt') }}">
+        <div class="form-group">
+          <label for="token">Token</label>
+          <input type="text" id="token" name="token"
+                 placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" required>
+        </div>
+        <button type="submit" class="btn btn-secondary btn-block">Descifrar</button>
+      </form>
+    </section>
+
+  </div>
+
+  <!-- ── Panel derecho: historial ── -->
+  <div class="panel">
+
+    <!-- Mis mensajes cifrados -->
+    <section class="card">
+      <h2>Mis textos cifrados</h2>
+      {% if my_messages %}
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Token</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for msg in my_messages %}
+              <tr>
+                <td><code class="token-pill">{{ msg.token }}</code></td>
+                <td class="muted">{{ msg.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <p class="empty">Aún no has cifrado ningún texto.</p>
+      {% endif %}
+    </section>
+
+    <!-- Historial de intentos de descifrado -->
+    <section class="card">
+      <h2>Historial de descifrado</h2>
+      {% if my_attempts %}
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Token usado</th>
+                <th>Texto descifrado</th>
+                <th>Resultado</th>
+                <th>Fecha y hora</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for a in my_attempts %}
+              <tr>
+                <td><code class="token-pill">{{ a.token_used }}</code></td>
+                <td>{{ a.original_text or '—' }}</td>
+                <td>
+                  {% if a.successful %}
+                    <span class="badge badge-ok">Exitoso</span>
+                  {% else %}
+                    <span class="badge badge-fail">Fallido</span>
+                  {% endif %}
+                </td>
+                <td class="muted">{{ a.attempted_at.strftime('%d/%m/%Y %H:%M:%S') }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <p class="empty">No hay intentos de descifrado registrados.</p>
+      {% endif %}
+    </section>
+
+  </div>
+</div>
+{% endblock %}
